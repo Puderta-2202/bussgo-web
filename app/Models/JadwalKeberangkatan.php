@@ -45,8 +45,8 @@ class JadwalKeberangkatan extends Model
         'tanggal_berangkat' => 'date', // Otomatis cast ke objek Carbon/DateTime
         'harga' => 'decimal:0', // Sesuai dengan decimal(10,0) di DB. Jika Anda ubah DB ke decimal(10,2), ganti ini jadi 'decimal:2'
         'jumlah_kursi_tersedia' => 'integer',
-        'jam_berangkat' => 'datetime:H:i:s', // Atau cukup 'string' jika Anda handle manual
-        'jam_sampai' => 'datetime:H:i:s',    // Atau cukup 'string'
+        'jam_berangkat' => 'string', // Atau cukup 'string' jika Anda handle manual
+        'jam_sampai' => 'string',    // Atau cukup 'string'
     ];
 
     /**

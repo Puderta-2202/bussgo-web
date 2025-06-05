@@ -4,7 +4,9 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Admin\AdminAuthController;
 use App\Http\Controllers\Admin\DashboardController;
 use App\Http\Controllers\Admin\BusController;
-use App\Http\Controllers\Admin\AdminSistemController;
+use App\Http\Controllers\Admin\KeberangkatanController;
+use App\Http\Controllers\Admin\PemesananController;
+// use App\Http\Controllers\Admin\AdminSistemController;
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -45,6 +47,9 @@ Route::prefix('admin')->name('admin.')->group(function () {
         // Tambahkan rute CRUD Anda di sini nanti di dalam grup middleware 'auth:admin_sistem'
         // Contoh:
         Route::resource('bus', App\Http\Controllers\Admin\BusController::class);
+        Route::resource('keberangkatan', App\Http\Controllers\Admin\KeberangkatanController::class);
+        Route::resource('pemesanan', App\Http\Controllers\Admin\PemesananController::class)->except(['create', 'store', 'edit', 'update']);
+        Route::get('pemesanan/{pemesanan}/cetak', [App\Http\Controllers\Admin\PemesananController::class, 'cetak'])->name('pemesanan.cetak');
         Route::get('admins', [AdminAuthController::class, 'indexAdmins'])->name('admins.index');
         Route::get('admins/create', [AdminAuthController::class, 'createAdmin'])->name('admins.create'); // Asumsi method createAdmin ada
         Route::post('admins', [AdminAuthController::class, 'register'])->name('admins.store'); // Atau storeAdmin jika ada
@@ -53,8 +58,3 @@ Route::prefix('admin')->name('admin.')->group(function () {
         Route::delete('admins/{adminSistem}', [AdminAuthController::class, 'destroyAdmin'])->name('admins.destroy');
     });
 });
-
-// Hapus atau komentari rute 'welcome' bawaan jika masih ada
-// Route::get('/welcome', function () {
-//     return view('welcome');
-// });

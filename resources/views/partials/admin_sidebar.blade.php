@@ -15,17 +15,17 @@
         </li>
         {{-- Tambahkan item menu lain di sini dengan format yang sama --}}
         <li class="nav-item {{ Route::is('admin.admins.*') ? 'active' : '' }}">
-            <a class="nav-link" href="{{ Route('admin.admins.index')}}"> <i class="fas fa-users-cog nav-icon"></i> Data Admin Sistem </a>
+            <a class="nav-link" href="{{ Route('admin.admins.index')}}"> <i class="fas fa-users-cog nav-icon"></i>Data Admin Sistem </a>
         </li>
-        <li class="nav-item">
-            <a class="nav-link" href="#"> <i class="fas fa-calendar-alt nav-icon"></i> Data Keberangkatan </a>
+        <li class="nav-item {{ Route::is('admin.keberangkatan.*') ? 'active' : '' }}">
+            <a class="nav-link" href="{{ Route ('admin.keberangkatan.index')}}"> <i class="fas fa-calendar-alt nav-icon"></i> Data Keberangkatan </a>
         </li>
-        <li class="nav-item">
-            <a class="nav-link" href="#"> <i class="fas fa-clipboard-list nav-icon"></i> Data Pemesanan </a>
+        <li class="nav-item {{ Route::is('admin.pemesanan.*') ? 'active' : '' }}">
+            <a class="nav-link" href="{{ Route ('admin.pemesanan.index') }}"> <i class="fas fa-clipboard-list nav-icon"></i> Data Pemesanan </a>
         </li>
-        <li class="nav-item">
+        {{-- <li class="nav-item">
             <a class="nav-link" href="#"> <i class="fas fa-file-alt nav-icon"></i> Laporan </a>
-        </li>
+        </li> --}}
         <li class="nav-item mt-auto"> {{-- mt-auto untuk mendorong logout ke bawah --}}
             <a class="nav-link" href="{{ route('admin.logout') }}"
                onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
