@@ -6,11 +6,11 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
-// use Laravel\Sanctum\HasApiTokens; // Uncomment jika Anda akan menggunakan Sanctum untuk API
+use Laravel\Sanctum\HasApiTokens; // Uncomment jika Anda akan menggunakan Sanctum untuk API
 
 class User extends Authenticatable // implements MustVerifyEmail // Uncomment jika MustVerifyEmail digunakan
 {
-    use HasFactory, Notifiable; // HasApiTokens jika perlu
+    use HasApiTokens, HasFactory, Notifiable; // HasApiTokens jika perlu
 
     /**
      * Nama tabel yang terhubung dengan model ini.
@@ -30,11 +30,11 @@ class User extends Authenticatable // implements MustVerifyEmail // Uncomment ji
         'nama_lengkap',
         'username',
         'email',
-        'no_telepon',
+        'no_handphone',
+        'email_verified_at', // Biasanya diatur oleh Laravel atau proses verifikasi
         'password',
+        'saldo',
         'alamat',
-        'saldo_buspay',
-        // 'email_verified_at', // Biasanya diatur oleh Laravel atau proses verifikasi
     ];
 
     /**

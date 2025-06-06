@@ -6,7 +6,8 @@ use App\Http\Controllers\Admin\DashboardController;
 use App\Http\Controllers\Admin\BusController;
 use App\Http\Controllers\Admin\KeberangkatanController;
 use App\Http\Controllers\Admin\PemesananController;
-// use App\Http\Controllers\Admin\AdminSistemController;
+use App\Http\Controllers\Admin\UserController;
+use App\Http\Controllers\Admin\TopUpManagementController;
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -49,6 +50,8 @@ Route::prefix('admin')->name('admin.')->group(function () {
         Route::resource('bus', App\Http\Controllers\Admin\BusController::class);
         Route::resource('keberangkatan', App\Http\Controllers\Admin\KeberangkatanController::class);
         Route::resource('pemesanan', App\Http\Controllers\Admin\PemesananController::class)->except(['create', 'store', 'edit', 'update']);
+        Route::get('users', [UserController::class, 'index'])->name('users.index');
+        Route::get('users/{user}', [UserController::class, 'show'])->name('users.show');
         Route::get('pemesanan/{pemesanan}/cetak', [App\Http\Controllers\Admin\PemesananController::class, 'cetak'])->name('pemesanan.cetak');
         Route::get('admins', [AdminAuthController::class, 'indexAdmins'])->name('admins.index');
         Route::get('admins/create', [AdminAuthController::class, 'createAdmin'])->name('admins.create'); // Asumsi method createAdmin ada
@@ -56,5 +59,8 @@ Route::prefix('admin')->name('admin.')->group(function () {
         Route::get('admins/{adminSistem}/edit', [AdminAuthController::class, 'editAdmin'])->name('admins.edit');
         Route::put('admins/{adminSistem}', [AdminAuthController::class, 'updateAdmin'])->name('admins.update');
         Route::delete('admins/{adminSistem}', [AdminAuthController::class, 'destroyAdmin'])->name('admins.destroy');
+        Route::get('topup-requests', [TopUpManagementController::class, 'index'])->name('admin.topup.index');
+        Route::post('topup-requests/{transaction}/approve', [TopUpManagementController::class, 'approve'])->name('admin.topup.approve');
+        Route::post('topup-requests/{transaction}/reject', [TopUpManagementController::class, 'reject'])->name('admin.topup.reject');
     });
 });

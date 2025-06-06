@@ -8,14 +8,17 @@
                 <i class="fas fa-home nav-icon"></i> Home
             </a>
         </li>
+        {{-- Tambahkan item menu lain di sini dengan format yang sama --}}
+        <li class="nav-item {{ Route::is('admin.admins.*') ? 'active' : '' }}">
+            <a class="nav-link" href="{{ Route('admin.admins.index')}}"> <i class="fas fa-users-cog nav-icon"></i>Data Admin Sistem </a>
+        </li>
+        <li class="nav-item {{ Route::is('admin.users.*') ? 'active' : '' }}">
+            <a class="nav-link" href="{{ route('admin.users.index') }}"> <i class="fas fa-users nav-icon"></i>Data Pengguna </a>
+        </li>
         <li class="nav-item {{ Route::is('admin.bus.*') ? 'active' : '' }}">
             <a class="nav-link" href="{{ route('admin.bus.index') }}">
                 <i class="fas fa-bus nav-icon"></i> Bus
             </a>
-        </li>
-        {{-- Tambahkan item menu lain di sini dengan format yang sama --}}
-        <li class="nav-item {{ Route::is('admin.admins.*') ? 'active' : '' }}">
-            <a class="nav-link" href="{{ Route('admin.admins.index')}}"> <i class="fas fa-users-cog nav-icon"></i>Data Admin Sistem </a>
         </li>
         <li class="nav-item {{ Route::is('admin.keberangkatan.*') ? 'active' : '' }}">
             <a class="nav-link" href="{{ Route ('admin.keberangkatan.index')}}"> <i class="fas fa-calendar-alt nav-icon"></i> Data Keberangkatan </a>
