@@ -13,21 +13,31 @@ class JadwalController extends Controller
     /**
      * Menampilkan daftar jadwal keberangkatan yang aktif dan akan datang.
      */
-    public function index()
+    public function index(Request $request) // <-- Tambahkan Request $request
     {
-        // Ambil data jadwal yang:
-        // 1. Statusnya 'aktif'
-        // 2. Tanggal keberangkatannya adalah hari ini atau di masa depan
-        // 3. Muat relasi 'bus' untuk menghindari N+1 problem (Eager Loading)
-        // 4. Urutkan berdasarkan tanggal terdekat
-        $jadwal = JadwalKeberangkatan::with('bus')
+        $query = JadwalKeberangkatan::with('bus')
             ->where('status_jadwal', 'aktif')
-            ->where('tanggal_berangkat', '>=', Carbon::today()->toDateString())
-            ->orderBy('tanggal_berangkat', 'asc')
-            ->orderBy('jam_berangkat', 'asc')
-            ->paginate(15); // Gunakan paginate agar data tidak terlalu besar
+            // Filter tanggal agar hanya menampilkan yang akan datang
+            ->where('tanggal_berangkat', '>=', Carbon::today()->toDateString());
 
-        // Kembalikan data dalam bentuk koleksi resource
+        // --- Tambahkan logika filter di sini ---
+        if ($request->has('asal')) {
+            $query->where('asal', 'like', '%' . $request->input('asal') . '%');
+        }
+
+        if ($request->has('tujuan')) {
+            $query->where('tujuan', 'like', '%' . $request->input('tujuan') . '%');
+        }
+
+        // Filter tanggal spesifik jika diberikan
+        if ($request->has('tanggal')) {
+            $query->whereDate('tanggal_berangkat', $request->input('tanggal'));
+        }
+
+        $jadwal = $query->orderBy('tanggal_berangkat', 'asc')
+            ->orderBy('jam_berangkat', 'asc')
+            ->paginate(15);
+
         return JadwalResource::collection($jadwal);
     }
 

@@ -16,32 +16,33 @@ class AuthController extends Controller
      */
     public function register(Request $request)
     {
-        // 1. Validasi data yang masuk
+        // 1. Ubah validasi dari 'name' menjadi 'nama_lengkap'
         $validatedData = $request->validate([
-            'name' => 'required|string|max:255',
+            'nama_lengkap' => 'required|string|max:255',
             'email' => 'required|string|email|max:255|unique:users',
-            'no_handphone' => 'required|string|max:15|unique:users,no_handphone', // Validasi No HP
-            'password' => 'required|string|min:8|confirmed', // 'confirmed' berarti harus ada field 'password_confirmation'
+            'no_handphone' => 'required|string|max:15|unique:users,no_handphone',
+            'alamat' => 'required|string|max:255',
+            'password' => 'required|string|min:8|confirmed',
         ]);
 
-        // 2. Buat user baru di database
+        // 2. Ubah data yang dibuat dari 'name' menjadi 'nama_lengkap'
         $user = User::create([
-            'name' => $validatedData['name'],
+            'nama_lengkap' => $validatedData['nama_lengkap'],
             'email' => $validatedData['email'],
             'no_handphone' => $validatedData['no_handphone'],
-            'password' => Hash::make($validatedData['password']), // Password di-hash demi keamanan
+            'alamat' => $validatedData['alamat'],
+            'password' => Hash::make($validatedData['password']),
         ]);
 
-        // 3. Buat token API untuk user yang baru mendaftar
+        // Bagian token tetap sama
         $token = $user->createToken('auth_token')->plainTextToken;
 
-        // 4. Kirim respons kembali ke aplikasi mobile
         return response()->json([
             'message' => 'Registrasi berhasil',
             'access_token' => $token,
             'token_type' => 'Bearer',
             'user' => $user
-        ], 201); // 201 artinya 'Created'
+        ], 201);
     }
 
     /**

@@ -31,6 +31,7 @@ class User extends Authenticatable // implements MustVerifyEmail // Uncomment ji
         'username',
         'email',
         'no_handphone',
+        'alamat',
         'email_verified_at', // Biasanya diatur oleh Laravel atau proses verifikasi
         'password',
         'saldo',

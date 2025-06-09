@@ -100,4 +100,48 @@ class PemesananApiController extends Controller
         $pemesanan->load('jadwalKeberangkatan.bus');
         return new PemesananResource($pemesanan);
     }
+    public function bayarDenganSaldo(Request $request)
+    {
+        $validatedData = $request->validate([
+            'pemesanan_id' => 'required|exists:pemesanan,id',
+        ]);
+
+        $user = Auth::user();
+        $pemesanan = Pemesanan::find($validatedData['pemesanan_id']);
+
+        // Pastikan pemesanan ini milik user yang sedang login
+        if ($pemesanan->user_id !== $user->id) {
+            return response()->json(['message' => 'Akses ditolak.'], 403);
+        }
+
+        // Pastikan pemesanan belum dibayar
+        if ($pemesanan->status_pembayaran !== 'pending') {
+            return response()->json(['message' => 'Pemesanan ini sudah diproses.'], 422);
+        }
+
+        // Validasi saldo
+        if ($user->saldo < $pemesanan->total_harga) {
+            return response()->json(['message' => 'Saldo Anda tidak mencukupi.'], 422);
+        }
+
+        // Gunakan transaction untuk keamanan data
+        try {
+            DB::beginTransaction();
+
+            // 1. Potong saldo user
+            $user->decrement('saldo', $pemesanan->total_harga);
+
+            // 2. Update status pemesanan
+            $pemesanan->status_pembayaran = 'berhasil';
+            $pemesanan->metode_pembayaran = 'saldo';
+            $pemesanan->save();
+
+            DB::commit();
+
+            return response()->json(['message' => 'Pembayaran dengan saldo berhasil!']);
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return response()->json(['message' => 'Terjadi kesalahan saat memproses pembayaran.'], 500);
+        }
+    }
 }

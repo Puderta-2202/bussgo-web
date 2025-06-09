@@ -15,7 +15,9 @@ Route::get('/jadwal-keberangkatan/{id}', [JadwalController::class, 'show']);
 Route::middleware('auth:sanctum')->group(function () {
     Route::post('/pemesanan', [PemesananApiController::class, 'store']);
     Route::get('/pemesanan/riwayat', [PemesananApiController::class, 'riwayatPemesanan']);
+    Route::get('user', [AuthController::class, 'user']);
     Route::get('/pemesanan/{pemesanan}', [PemesananApiController::class, 'showPemesananDetail']);
+    Route::post('/pemesanan/bayar-dengan-saldo', [PemesananApiController::class, 'bayarDenganSaldo']);
     Route::post('/topup/request', [TopUpController::class, 'requestTopUp']);
     Route::post('/logout', [AuthController::class, 'logout']);
 });

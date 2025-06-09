@@ -50,7 +50,7 @@
                         @forelse ($users as $index => $user)
                         <tr>
                             <td>{{ $users->firstItem() + $index }}</td>
-                            <td>{{ $user->name }}</td>
+                            <td>{{ $user->nama_lengkap }}</td>
                             <td>{{ $user->email }}</td>
                             <td>{{ $user->no_handphone ?? '-' }}</td>
                             <td>Rp{{ number_format($user->saldo, 2, ',', '.') }}</td>
