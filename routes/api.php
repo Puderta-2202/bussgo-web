@@ -13,9 +13,11 @@ Route::post('/login', [AuthController::class, 'login']);
 Route::get('/jadwal-keberangkatan', [JadwalController::class, 'index']);
 Route::get('/jadwal-keberangkatan/{id}', [JadwalController::class, 'show']);
 Route::middleware('auth:sanctum')->group(function () {
+    Route::get('/user', function (Request $request) {
+        return $request->user();
+    });
     Route::post('/pemesanan', [PemesananApiController::class, 'store']);
     Route::get('/pemesanan/riwayat', [PemesananApiController::class, 'riwayatPemesanan']);
-    Route::get('user', [AuthController::class, 'user']);
     Route::get('/pemesanan/{pemesanan}', [PemesananApiController::class, 'showPemesananDetail']);
     Route::post('/pemesanan/bayar-dengan-saldo', [PemesananApiController::class, 'bayarDenganSaldo']);
     Route::post('/topup/request', [TopUpController::class, 'requestTopUp']);

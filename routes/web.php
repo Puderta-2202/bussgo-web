@@ -8,18 +8,7 @@ use App\Http\Controllers\Admin\KeberangkatanController;
 use App\Http\Controllers\Admin\PemesananController;
 use App\Http\Controllers\Admin\UserController;
 use App\Http\Controllers\Admin\TopUpManagementController;
-/*
-|--------------------------------------------------------------------------
-| Web Routes
-|--------------------------------------------------------------------------
-|
-| Here is where you can register web routes for your application. These
-| routes are loaded by the RouteServiceProvider and all of them will
-| be assigned to the "web" middleware group. Make something great!
-|
-*/
 
-// 1. Mengarahkan rute root (/) ke halaman login admin
 Route::get('/', function () {
     return redirect()->route('admin.login.form');
 });
