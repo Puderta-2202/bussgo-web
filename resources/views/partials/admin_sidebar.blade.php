@@ -26,9 +26,9 @@
         <li class="nav-item {{ Route::is('admin.pemesanan.*') ? 'active' : '' }}">
             <a class="nav-link" href="{{ Route ('admin.pemesanan.index') }}"> <i class="fas fa-clipboard-list nav-icon"></i> Data Pemesanan </a>
         </li>
-        {{-- <li class="nav-item">
-            <a class="nav-link" href="#"> <i class="fas fa-file-alt nav-icon"></i> Laporan </a>
-        </li> --}}
+        <li class="nav-item {{ Route::is('admin.topup.*') ? 'active' : '' }}">
+            <a class="nav-link" href="{{ Route ('admin.topup.index') }}"> <i class="fas fa-file-alt nav-icon"></i> Top Up </a>
+        </li>
         <li class="nav-item mt-auto"> {{-- mt-auto untuk mendorong logout ke bawah --}}
             <a class="nav-link" href="{{ route('admin.logout') }}"
                onclick="event.preventDefault(); document.getElementById('logout-form').submit();">

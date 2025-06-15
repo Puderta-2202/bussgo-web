@@ -21,6 +21,8 @@ class PemesananApiController extends Controller
         $validatedData = $request->validate([
             'keberangkatan_id' => 'required|exists:keberangkatan,id',
             'jumlah_tiket' => 'required|integer|min:1',
+            'nomor_kursi_dipesan' => 'required|array',
+            'nomor_kursi_dipesan.*' => 'required|string',
         ]);
 
         $jadwal = JadwalKeberangkatan::find($validatedData['keberangkatan_id']);
@@ -44,10 +46,11 @@ class PemesananApiController extends Controller
                 'bus_id' => $jadwal->bus_id,
                 'keberangkatan_id' => $jadwal->id,
                 'kode_booking' => 'BOOK-' . strtoupper(Str::random(8)),
-                'nama_pemesan' => $user->name,
+                'nama_pemesan' => $user->nama_lengkap, // Mengambil dari data user
                 'email_pemesan' => $user->email,
                 'telepon_pemesan' => $user->no_handphone, // Mengambil dari data user
                 'jumlah_tiket' => $validatedData['jumlah_tiket'],
+                'nomor_kursi_dipesan' => $validatedData['nomor_kursi_dipesan'],
                 'total_harga' => $totalHarga,
                 'status_pembayaran' => 'pending', // Status awal, sebelum pembayaran
             ]);
@@ -100,47 +103,56 @@ class PemesananApiController extends Controller
         $pemesanan->load('jadwalKeberangkatan.bus');
         return new PemesananResource($pemesanan);
     }
+
+    /**
+     * Memproses pembayaran yang menggunakan saldo internal (BusPay).
+     */
     public function bayarDenganSaldo(Request $request)
     {
+        // 1. Validasi input: pastikan pemesanan_id dikirim
         $validatedData = $request->validate([
             'pemesanan_id' => 'required|exists:pemesanan,id',
         ]);
 
         $user = Auth::user();
+        if (!($user instanceof \Illuminate\Database\Eloquent\Model)) {
+            $user = \App\Models\User::find(Auth::id());
+        }
         $pemesanan = Pemesanan::find($validatedData['pemesanan_id']);
 
-        // Pastikan pemesanan ini milik user yang sedang login
+        // 2. Keamanan: Pastikan pemesanan ini milik user yang sedang login
         if ($pemesanan->user_id !== $user->id) {
             return response()->json(['message' => 'Akses ditolak.'], 403);
         }
 
-        // Pastikan pemesanan belum dibayar
+        // 3. Keamanan: Pastikan pemesanan ini belum pernah dibayar
         if ($pemesanan->status_pembayaran !== 'pending') {
             return response()->json(['message' => 'Pemesanan ini sudah diproses.'], 422);
         }
 
-        // Validasi saldo
+        // 4. Logika Bisnis: Pastikan saldo pengguna mencukupi
         if ($user->saldo < $pemesanan->total_harga) {
-            return response()->json(['message' => 'Saldo Anda tidak mencukupi.'], 422);
+            return response()->json(['message' => 'Saldo BusPay Anda tidak mencukupi.'], 422);
         }
 
-        // Gunakan transaction untuk keamanan data
+        // 5. Proses Inti: Gunakan transaction untuk keamanan data
         try {
             DB::beginTransaction();
 
-            // 1. Potong saldo user
-            $user->decrement('saldo', $pemesanan->total_harga);
+            // a. Potong saldo user
+            $user->saldo = $user->saldo - $pemesanan->total_harga;
+            $user->save();
 
-            // 2. Update status pemesanan
+            // b. Update status pemesanan menjadi 'berhasil'
             $pemesanan->status_pembayaran = 'berhasil';
-            $pemesanan->metode_pembayaran = 'saldo';
+            $pemesanan->metode_pembayaran = 'saldo'; // Tandai metode pembayarannya
             $pemesanan->save();
 
-            DB::commit();
+            DB::commit(); // Simpan semua perubahan ke database jika tidak ada error
 
             return response()->json(['message' => 'Pembayaran dengan saldo berhasil!']);
         } catch (\Exception $e) {
-            DB::rollBack();
+            DB::rollBack(); // Batalkan semua jika ada error
             return response()->json(['message' => 'Terjadi kesalahan saat memproses pembayaran.'], 500);
         }
     }

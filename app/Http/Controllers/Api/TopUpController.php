@@ -14,21 +14,14 @@ class TopUpController extends Controller
     {
         $validatedData = $request->validate([
             'amount' => 'required|numeric|min:10000',
-            'proof_of_payment' => 'required|image|mimes:jpeg,png,jpg|max:2048', // Validasi file gambar
         ]);
 
         $user = Auth::user();
-        $orderId = 'TOPUP-' . $user->id . '-' . time();
 
-        // Simpan file gambar bukti transfer
-        $path = $request->file('proof_of_payment')->store('public/proofs');
-
-        // Buat catatan transaksi dengan status 'pending'
         TopUpTransaction::create([
             'user_id' => $user->id,
-            'order_id' => $orderId,
+            'order_id' => 'TOPUP-' . $user->id . '-' . time(),
             'amount' => $validatedData['amount'],
-            'proof_of_payment' => $path, // Simpan path filenya
             'status' => 'pending',
         ]);
 

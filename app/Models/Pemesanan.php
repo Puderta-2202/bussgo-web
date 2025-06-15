@@ -32,6 +32,7 @@ class Pemesanan extends Model
         'email_pemesan', // Kolom baru yang disarankan
         'telepon_pemesan', // Kolom baru yang disarankan
         'jumlah_tiket',
+        'nomor_kursi_dipesan',
         'total_harga', // Kolom baru yang disarankan
         'status_pembayaran', // Kolom baru yang disarankan
         'metode_pembayaran', // Kolom baru yang disarankan
@@ -45,6 +46,7 @@ class Pemesanan extends Model
     protected $casts = [
         'total_harga' => 'decimal:2', // Memastikan presisi untuk harga
         'jumlah_tiket' => 'integer',
+        'nomor_kursi_dipesan' => 'array',
         // Jika Anda menyimpan tanggal spesifik pemesanan (bukan hanya dari jadwal)
         // 'tanggal_pemesanan' => 'datetime',
     ];

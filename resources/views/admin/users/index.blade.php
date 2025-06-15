@@ -59,13 +59,13 @@
                                     <i class="fas fa-eye"></i>
                                 </a>
                                 {{-- Tombol Edit (Biru seperti di contoh) --}}
-                                <a href="#" class="btn btn-primary btn-sm" title="Edit Pengguna">
+                                {{-- <a href="#" class="btn btn-primary btn-sm" title="Edit Pengguna">
                                     <i class="fas fa-edit"></i>
-                                </a>
+                                </a> --}}
                                 {{-- Tombol Hapus (Merah) --}}
-                                <a href="#" class="btn btn-danger btn-sm" title="Hapus Pengguna" onclick="return confirm('Apakah Anda yakin ingin menghapus pengguna ini?');">
+                                {{-- <a href="#" class="btn btn-danger btn-sm" title="Hapus Pengguna" onclick="return confirm('Apakah Anda yakin ingin menghapus pengguna ini?');">
                                     <i class="fas fa-trash"></i>
-                                </a>
+                                </a> --}}
                             </td>
                         </tr>
                         @empty

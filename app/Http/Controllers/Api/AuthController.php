@@ -8,6 +8,8 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\ValidationException;
+use Illuminate\Support\Facades\Password;
+use Illuminate\Auth\Events\PasswordReset;
 
 class AuthController extends Controller
 {
@@ -84,5 +86,32 @@ class AuthController extends Controller
         $request->user()->currentAccessToken()->delete();
 
         return response()->json(['message' => 'Logout berhasil.']);
+    }
+    public function changePassword(Request $request)
+    {
+        $validatedData = $request->validate([
+            'current_password' => 'required',
+            'new_password' => 'required|string|min:8|confirmed',
+        ]);
+
+        $user = User::findOrFail(Auth::id());
+
+        if (!Hash::check($validatedData['current_password'], $user->password)) {
+            return response()->json(['message' => 'Kata sandi lama salah.'], 422);
+        }
+
+        $user->password = Hash::make($validatedData['new_password']);
+        $user->save();
+
+        return response()->json(['message' => 'Kata sandi berhasil diperbarui.']);
+    }
+    public function forgotPassword(Request $request)
+    {
+        $request->validate(['email' => 'required|email']);
+        // Ini adalah logika standar Laravel untuk mengirim link reset
+        $status = Password::sendResetLink($request->only('email'));
+        return $status == Password::RESET_LINK_SENT
+            ? response()->json(['message' => 'Link reset password telah dikirim ke email Anda.'])
+            : response()->json(['message' => 'Gagal mengirim link, email mungkin tidak terdaftar.'], 422);
     }
 }

@@ -23,6 +23,7 @@ class PemesananResource extends JsonResource
             'status_pembayaran' => $this->status_pembayaran,
             'metode_pembayaran' => $this->metode_pembayaran,
             'tanggal_pemesanan' => $this->created_at->format('Y-m-d H:i:s'),
+            'nomor_kursi_dipesan' => $this->nomor_kursi_dipesan,
             // Memuat detail jadwal menggunakan JadwalResource yang sudah kita buat
             'jadwal_keberangkatan' => new JadwalResource($this->whenLoaded('jadwalKeberangkatan')),
         ];

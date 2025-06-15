@@ -13,7 +13,6 @@ class TopUpTransaction extends Model
         'user_id',
         'order_id',
         'amount',
-        'proof_of_payment',
         'status',
     ];
 

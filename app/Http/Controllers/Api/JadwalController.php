@@ -3,7 +3,8 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
-use App\Models\JadwalKeberangkatan; // Pastikan nama model ini benar
+use App\Models\JadwalKeberangkatan;
+use App\Models\Pemesanan;
 use App\Http\Resources\JadwalResource;
 use Illuminate\Http\Request;
 use Carbon\Carbon;
@@ -54,5 +55,17 @@ class JadwalController extends Controller
 
         // Kembalikan data dalam bentuk satu resource
         return new JadwalResource($jadwal);
+    }
+    public function getKursiTerisi($id)
+    {
+        // Cari semua pemesanan untuk jadwal ini yang statusnya tidak gagal/dibatalkan
+        $pemesanan = Pemesanan::where('keberangkatan_id', $id)
+            ->whereNotIn('status_pembayaran', ['gagal', 'dibatalkan', 'kadaluarsa'])
+            ->get();
+
+        // Kumpulkan semua nomor kursi dari semua pemesanan menjadi satu array
+        $kursiTerisi = $pemesanan->pluck('nomor_kursi_dipesan')->flatten()->unique()->values();
+
+        return response()->json(['data' => $kursiTerisi]);
     }
 }

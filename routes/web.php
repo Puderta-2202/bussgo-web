@@ -39,6 +39,7 @@ Route::prefix('admin')->name('admin.')->group(function () {
         Route::resource('bus', App\Http\Controllers\Admin\BusController::class);
         Route::resource('keberangkatan', App\Http\Controllers\Admin\KeberangkatanController::class);
         Route::resource('pemesanan', App\Http\Controllers\Admin\PemesananController::class)->except(['create', 'store', 'edit', 'update']);
+        // Route::resource('topup', App\Http\Controllers\Admin\TopUpManagementController::class)->only(['index', 'approve', 'reject']);
         Route::get('users', [UserController::class, 'index'])->name('users.index');
         Route::get('users/{user}', [UserController::class, 'show'])->name('users.show');
         Route::get('pemesanan/{pemesanan}/cetak', [App\Http\Controllers\Admin\PemesananController::class, 'cetak'])->name('pemesanan.cetak');
@@ -48,8 +49,8 @@ Route::prefix('admin')->name('admin.')->group(function () {
         Route::get('admins/{adminSistem}/edit', [AdminAuthController::class, 'editAdmin'])->name('admins.edit');
         Route::put('admins/{adminSistem}', [AdminAuthController::class, 'updateAdmin'])->name('admins.update');
         Route::delete('admins/{adminSistem}', [AdminAuthController::class, 'destroyAdmin'])->name('admins.destroy');
-        Route::get('topup-requests', [TopUpManagementController::class, 'index'])->name('admin.topup.index');
-        Route::post('topup-requests/{transaction}/approve', [TopUpManagementController::class, 'approve'])->name('admin.topup.approve');
-        Route::post('topup-requests/{transaction}/reject', [TopUpManagementController::class, 'reject'])->name('admin.topup.reject');
+        Route::get('topup', [TopUpManagementController::class, 'index'])->name('topup.index');
+        Route::post('topup/{transaction}/approve', [TopUpManagementController::class, 'approve'])->name('topup.approve');
+        Route::post('topup/{transaction}/reject', [TopUpManagementController::class, 'reject'])->name('topup.reject');
     });
 });
