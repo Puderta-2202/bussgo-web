@@ -4,16 +4,14 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Casts\Attribute; // <-- Tambahkan ini
+use Carbon\Carbon; // <-- Tambahkan ini
 
 class JadwalKeberangkatan extends Model
 {
     use HasFactory;
 
     /**
-     * Nama tabel yang terhubung dengan model ini.
-     * Laravel akan mencari 'jadwal_keberangkatans' jika ini tidak ditentukan.
-     * Karena nama tabel Anda 'keberangkatan', kita perlu menentukannya.
-     *
      * @var string
      */
     protected $table = 'keberangkatan'; // Sesuaikan dengan nama tabel Anda
@@ -54,23 +52,36 @@ class JadwalKeberangkatan extends Model
      */
     public function bus()
     {
-        // Asumsi Model untuk tabel 'bus' Anda adalah 'Bus'
-        // dan foreign key di tabel ini ('keberangkatan') adalah 'bus_id'
         return $this->belongsTo(Bus::class, 'bus_id');
     }
 
-    /**
-     * Relasi One-to-Many: Satu JadwalKeberangkatan bisa memiliki banyak Pemesanan.
-     */
     public function pemesanans() // atau nama relasi yang Anda inginkan
     {
-        // Asumsi Model untuk tabel 'pemesanan' Anda adalah 'Pemesanan'
-        // dan foreign key di tabel 'pemesanan' yang merujuk ke jadwal ini adalah 'keberangkatan_id'
         return $this->hasMany(Pemesanan::class, 'keberangkatan_id');
     }
 
-    /**
-     * Kolom 'id' adalah primary key dan auto-increment (default Laravel).
-     * Kolom 'created_at' dan 'updated_at' juga dikelola otomatis (default Laravel).
-     */
+    // public function getStatusPerjalananAttribute(): string
+    // {
+    //     // Gabungkan tanggal dan jam berangkat menjadi satu objek waktu
+    //     $waktuBerangkat = Carbon::parse($this->tanggal_berangkat . ' ' . $this->jam_berangkat);
+    //     $waktuSampai = Carbon::parse($this->tanggal_berangkat . ' ' . $this->jam_sampai);
+
+    //     // Jika jam sampai lebih awal dari jam berangkat (berarti tiba di hari berikutnya)
+    //     if ($waktuSampai->isBefore($waktuBerangkat)) {
+    //         $waktuSampai->addDay();
+    //     }
+
+    //     // Cek status berdasarkan waktu sekarang
+    //     if ($this->status_jadwal == 'dibatalkan') {
+    //         return 'Dibatalkan';
+    //     } elseif ($this->status_jadwal == 'selesai') {
+    //         return 'Selesai';
+    //     } elseif (Carbon::now()->isBefore($waktuBerangkat)) {
+    //         return 'Belum Berangkat';
+    //     } elseif (Carbon::now()->between($waktuBerangkat, $waktuSampai)) {
+    //         return 'Telah Berangkat / Sedang Berjalan';
+    //     } else {
+    //         return 'Perjalanan Selesai';
+    //     }
+    // }
 }
