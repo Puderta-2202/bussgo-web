@@ -64,9 +64,9 @@
 
             <button type="submit" class="btn-login">Login</button>
         </form>
-        <div class="extra-links">
+        {{-- <div class="extra-links">
             Belum punya akun admin? <a href="{{ route('admin.register.form') }}">Register di sini</a>
-        </div>
+        </div> --}}
     </div>
 </body>
 </html>
