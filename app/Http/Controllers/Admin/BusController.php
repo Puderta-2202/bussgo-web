@@ -17,22 +17,18 @@ class BusController extends Controller
      */
     public function index(Request $request)
     {
+        // ... (Fungsi index Anda sudah benar, tidak perlu diubah)
         $search = $request->input('search');
-        $perPage = $request->input('per_page', 10); // Default 10 entri per halaman
-
+        $perPage = $request->input('per_page', 10);
         $query = Bus::orderBy('created_at', 'desc');
-
         if ($search) {
             $query->where('nama_bus', 'like', "%{$search}%")
                 ->orWhere('jenis_bus', 'like', "%{$search}%")
                 ->orWhere('plat_nomor', 'like', "%{$search}%");
         }
-
-        $buses = $query->paginate($perPage)->withQueryString(); // withQueryString agar parameter search & per_page tetap ada di link paginasi
-
+        $buses = $query->paginate($perPage)->withQueryString();
         return view('admin.bus.index', compact('buses', 'search', 'perPage'));
     }
-
     /**
      * Menampilkan form untuk membuat bus baru.
      *
@@ -55,7 +51,7 @@ class BusController extends Controller
             'nama_bus' => 'required|string|max:100|unique:bus,nama_bus',
             'jenis_bus' => 'required|string|max:50', // Sesuaikan max length jika perlu
             'plat_nomor' => 'required|string|max:20|unique:bus,plat_nomor',
-            // 'jumlah_kursi' => 'nullable|integer|min:1', // Jika Anda menambahkan kolom ini
+            'jumlah_kursi' => 'nullable|integer|min:1', // Jika Anda menambahkan kolom ini
         ]);
 
         Bus::create($validatedData);
@@ -98,7 +94,7 @@ class BusController extends Controller
                 'max:20',
                 Rule::unique('bus', 'plat_nomor')->ignore($bus->id),
             ],
-            // 'jumlah_kursi' => 'nullable|integer|min:1',
+            'jumlah_kursi' => 'nullable|integer|min:1',
         ]);
 
         $bus->update($validatedData);

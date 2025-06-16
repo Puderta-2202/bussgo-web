@@ -10,9 +10,11 @@
             <div class="card-header bg-primary text-white">
                 <h5 class="mb-0">Form Edit Bus: {{ $bus->nama_bus }}</h5>
             </div>
+            {{-- PERBAIKAN: Tambahkan $bus->id di dalam route() --}}
             <form action="{{ route('admin.bus.update', $bus->id) }}" method="POST">
                 @csrf
-                @method('PUT') {{-- Method untuk update --}}
+                @method('PUT') 
+                
                 <div class="card-body">
                     <div class="mb-3">
                         <label for="nama_bus" class="form-label">Nama Bus <span class="text-danger">*</span></label>
@@ -37,15 +39,16 @@
                             <div class="invalid-feedback">{{ $message }}</div>
                         @enderror
                     </div>
-                    {{--
+                    
+                    {{-- TAMBAHAN: Input untuk kapasitas kursi --}}
                     <div class="mb-3">
-                        <label for="jumlah_kursi" class="form-label">Jumlah Kursi</label>
-                        <input type="number" class="form-control @error('jumlah_kursi') is-invalid @enderror" id="jumlah_kursi" name="jumlah_kursi" value="{{ old('jumlah_kursi', $bus->jumlah_kursi) }}" min="1">
-                        @error('jumlah_kursi')
+                        <label for="kapasitas_kursi" class="form-label">Kapasitas Kursi <span class="text-danger">*</span></label>
+                        <input type="number" class="form-control @error('kapasitas_kursi') is-invalid @enderror" id="kapasitas_kursi" name="kapasitas_kursi" value="{{ old('kapasitas_kursi', $bus->kapasitas_kursi) }}" required min="1">
+                        @error('kapasitas_kursi')
                             <div class="invalid-feedback">{{ $message }}</div>
                         @enderror
                     </div>
-                    --}}
+
                 </div>
                 <div class="card-footer bg-light text-end">
                     <a href="{{ route('admin.bus.index') }}" class="btn btn-secondary me-2">Batal</a>

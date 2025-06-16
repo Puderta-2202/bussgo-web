@@ -36,10 +36,16 @@ Route::prefix('admin')->name('admin.')->group(function () {
 
         // Tambahkan rute CRUD Anda di sini nanti di dalam grup middleware 'auth:admin_sistem'
         // Contoh:
-        Route::resource('bus', App\Http\Controllers\Admin\BusController::class);
+        // Route::resource('bus', App\Http\Controllers\Admin\BusController::class);
+        Route::get('bus', [BusController::class, 'index'])->name('bus.index');
+        Route::get('bus/create', [BusController::class, 'create'])->name('bus.create');
+        Route::post('bus', [BusController::class, 'store'])->name('bus.store');
+        Route::get('bus/{bus}', [BusController::class, 'show'])->name('bus.show');
+        Route::get('bus/{bus}/edit', [BusController::class, 'edit'])->name('bus.edit');
+        Route::put('bus/{bus}', [BusController::class, 'update'])->name('bus.update');
+        Route::delete('bus/{bus}', [BusController::class, 'destroy'])->name('bus.destroy');
         Route::resource('keberangkatan', App\Http\Controllers\Admin\KeberangkatanController::class);
         Route::resource('pemesanan', App\Http\Controllers\Admin\PemesananController::class)->except(['create', 'store', 'edit', 'update']);
-        // Route::resource('topup', App\Http\Controllers\Admin\TopUpManagementController::class)->only(['index', 'approve', 'reject']);
         Route::get('users', [UserController::class, 'index'])->name('users.index');
         Route::get('users/{user}', [UserController::class, 'show'])->name('users.show');
         Route::get('pemesanan/{pemesanan}/cetak', [App\Http\Controllers\Admin\PemesananController::class, 'cetak'])->name('pemesanan.cetak');
