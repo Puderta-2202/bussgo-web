@@ -82,15 +82,21 @@ class PemesananApiController extends Controller
      */
     public function riwayatPemesanan()
     {
-        // --- INI BAGIAN PENTINGNYA ---
-        // Ambil data pemesanan, TAPI HANYA yang kolom 'user_id'-nya
-        // sama dengan ID pengguna yang sedang login (Auth::id())
-        $riwayat = Pemesanan::where('user_id', Auth::id())
+        // Ambil ID pengguna yang sedang login
+        $userId = Auth::id();
+
+        // Jika karena alasan apapun tidak ada user yang login, kembalikan koleksi kosong
+        if (!$userId) {
+            return response()->json(['data' => [], 'message' => 'Tidak terotentikasi.'], 401);
+        }
+
+        // Ambil data pemesanan HANYA untuk user_id yang sesuai
+        $riwayat = Pemesanan::where('user_id', $userId)
             ->with('jadwalKeberangkatan.bus')
-            ->latest() // Urutkan dari yang terbaru
+            ->latest()
             ->paginate(10);
 
-        // Gunakan PemesananResource untuk memformat output
+        // Gunakan ::collection untuk daftar data yang memiliki paginasi
         return PemesananResource::collection($riwayat);
     }
 
