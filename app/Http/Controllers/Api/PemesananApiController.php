@@ -91,7 +91,7 @@ class PemesananApiController extends Controller
             ->paginate(10);
 
         // Gunakan PemesananResource untuk memformat output
-        return new PemesananResource($riwayat);
+        return PemesananResource::collection($riwayat);
     }
 
     /**
