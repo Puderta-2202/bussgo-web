@@ -95,9 +95,9 @@
                                 <a href="{{ route('admin.pemesanan.show', $item->id) }}" class="btn btn-info btn-sm" title="Detail">
                                     <i class="fas fa-eye"></i>
                                 </a>
-                                <a href="{{ route('admin.pemesanan.cetak', $item->id) }}" class="btn btn-success btn-sm" title="Cetak Bukti" target="_blank">
+                                {{-- <a href="{{ route('admin.pemesanan.cetak', $item->id) }}" class="btn btn-success btn-sm" title="Cetak Bukti" target="_blank">
                                     <i class="fas fa-print"></i>
-                                </a>
+                                </a> --}}
                                 <form action="{{ route('admin.pemesanan.destroy', $item->id) }}" method="POST" class="d-inline" onsubmit="return confirm('Yakin ingin menghapus pemesanan ini?');">
                                     @csrf
                                     @method('DELETE')
