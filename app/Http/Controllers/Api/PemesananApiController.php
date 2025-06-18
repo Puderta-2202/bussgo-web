@@ -109,51 +109,43 @@ class PemesananApiController extends Controller
      */
     public function bayarDenganSaldo(Request $request)
     {
-        // 1. Validasi input: pastikan pemesanan_id dikirim
         $validatedData = $request->validate([
             'pemesanan_id' => 'required|exists:pemesanan,id',
         ]);
 
         $user = Auth::user();
-        if (!($user instanceof \Illuminate\Database\Eloquent\Model)) {
-            $user = \App\Models\User::find(Auth::id());
-        }
-        $pemesanan = Pemesanan::find($validatedData['pemesanan_id']);
+        $pemesanan = Pemesanan::findOrFail($validatedData['pemesanan_id']);
 
-        // 2. Keamanan: Pastikan pemesanan ini milik user yang sedang login
-        if ($pemesanan->user_id !== $user->id) {
-            return response()->json(['message' => 'Akses ditolak.'], 403);
+        // Keamanan: Pastikan pemesanan ini milik user yang sedang login
+        if ((int)$pemesanan->user_id !== (int)$user->id) {
+            return response()->json(['message' => 'Akses ditolak. Pesanan ini bukan milik Anda.'], 403);
         }
 
-        // 3. Keamanan: Pastikan pemesanan ini belum pernah dibayar
+        // Keamanan: Pastikan pemesanan belum dibayar
         if ($pemesanan->status_pembayaran !== 'pending') {
             return response()->json(['message' => 'Pemesanan ini sudah diproses.'], 422);
         }
 
-        // 4. Logika Bisnis: Pastikan saldo pengguna mencukupi
+        // Logika Bisnis: Pastikan saldo pengguna mencukupi
         if ($user->saldo < $pemesanan->total_harga) {
             return response()->json(['message' => 'Saldo BusPay Anda tidak mencukupi.'], 422);
         }
 
-        // 5. Proses Inti: Gunakan transaction untuk keamanan data
+        // Proses Inti
+        DB::beginTransaction();
         try {
-            DB::beginTransaction();
+            $user->decrement('saldo', $pemesanan->total_harga);
 
-            // a. Potong saldo user
-            $user->saldo = $user->saldo - $pemesanan->total_harga;
-            $user->save();
-
-            // b. Update status pemesanan menjadi 'berhasil'
             $pemesanan->status_pembayaran = 'berhasil';
-            $pemesanan->metode_pembayaran = 'saldo'; // Tandai metode pembayarannya
+            $pemesanan->metode_pembayaran = 'saldo';
             $pemesanan->save();
 
-            DB::commit(); // Simpan semua perubahan ke database jika tidak ada error
+            DB::commit();
 
             return response()->json(['message' => 'Pembayaran dengan saldo berhasil!']);
         } catch (\Exception $e) {
-            DB::rollBack(); // Batalkan semua jika ada error
-            return response()->json(['message' => 'Terjadi kesalahan saat memproses pembayaran.'], 500);
+            DB::rollBack();
+            return response()->json(['message' => 'Terjadi kesalahan saat memproses pembayaran.', 'error' => $e->getMessage()], 500);
         }
     }
 }
