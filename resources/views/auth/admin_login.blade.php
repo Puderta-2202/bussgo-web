@@ -57,10 +57,10 @@
                 <input type="password" id="password" name="password" required>
             </div>
 
-            <div class="form-group" style="text-align: left;">
+            {{-- <div class="form-group" style="text-align: left;">
                 <input type="checkbox" name="remember" id="remember" {{ old('remember') ? 'checked' : '' }}>
                 <label for="remember" style="font-weight: normal; display: inline;">Ingat Saya</label>
-            </div>
+            </div> --}}
 
             <button type="submit" class="btn-login">Login</button>
         </form>
