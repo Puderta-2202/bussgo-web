@@ -8,6 +8,7 @@ use App\Http\Controllers\Admin\KeberangkatanController;
 use App\Http\Controllers\Admin\PemesananController;
 use App\Http\Controllers\Admin\UserController;
 use App\Http\Controllers\Admin\TopUpManagementController;
+use App\Http\Controllers\Api\AuthController;
 
 Route::get('/', function () {
     return redirect()->route('admin.login.form');
@@ -58,5 +59,7 @@ Route::prefix('admin')->name('admin.')->group(function () {
         Route::get('topup', [TopUpManagementController::class, 'index'])->name('topup.index');
         Route::post('topup/{transaction}/approve', [TopUpManagementController::class, 'approve'])->name('topup.approve');
         Route::post('topup/{transaction}/reject', [TopUpManagementController::class, 'reject'])->name('topup.reject');
+        Route::get('reset-password/{token}', [AuthController::class, 'showResetForm'])->name('password.reset');
+        Route::post('reset-password', [AuthController::class, 'resetPassword'])->name('password.update');
     });
 });

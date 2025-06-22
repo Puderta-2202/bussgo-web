@@ -10,6 +10,7 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\ValidationException;
 use Illuminate\Support\Facades\Password;
 use Illuminate\Auth\Events\PasswordReset;
+use Illuminate\Support\Str;
 
 class AuthController extends Controller
 {
@@ -113,5 +114,44 @@ class AuthController extends Controller
         return $status == Password::RESET_LINK_SENT
             ? response()->json(['message' => 'Link reset password telah dikirim ke email Anda.'])
             : response()->json(['message' => 'Gagal mengirim link, email mungkin tidak terdaftar.'], 422);
+    }
+    public function showResetForm(Request $request, $token = null)
+    {
+        return view('auth.passwords.reset')->with(
+            ['token' => $token, 'email' => $request->email]
+        );
+    }
+
+    /**
+     * Memproses permintaan reset password.
+     */
+    public function resetPassword(Request $request)
+    {
+        $validatedData = $request->validate([
+            'token' => 'required',
+            'email' => 'required|email',
+            'password' => 'required|string|min:8|confirmed',
+        ]);
+
+        // Gunakan fitur reset password bawaan Laravel
+        $status = Password::reset($validatedData, function ($user, $password) {
+            $user->forceFill([
+                'password' => Hash::make($password)
+            ])->setRememberToken(Str::random(60));
+
+            $user->save();
+
+            event(new PasswordReset($user));
+        });
+
+        // Jika berhasil, kembalikan pesan sukses. Jika tidak, pesan error.
+        if ($status == Password::PASSWORD_RESET) {
+            // Anda bisa membuat view khusus untuk notifikasi sukses
+            return redirect('/')->with('status', __($status));
+        }
+
+        return back()
+            ->withInput($request->only('email'))
+            ->withErrors(['email' => __($status)]);
     }
 }
